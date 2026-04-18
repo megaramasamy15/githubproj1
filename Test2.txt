@@ -1,0 +1,48 @@
+from collections import defaultdict
+
+# Simulated gold price data (Year, Month, Gold Price)
+gold_data = """
+2019,01,32000
+2019,02,32500
+2019,03,33000
+2020,01,38000
+2020,02,38500
+2020,03,39000
+2021,01,48000
+2021,02,48500
+2021,03,49000
+"""
+
+# ---- MAPPER FUNCTION ----
+def mapper(lines):
+    mapped = []
+    for line in lines:
+        if line.strip():
+            year, month, price = line.strip().split(",")
+            mapped.append((year, int(price)))
+    return mapped
+
+# ---- REDUCER FUNCTION ----
+def reducer(mapped_data):
+    price_sum = defaultdict(int)
+    price_count = defaultdict(int)
+
+    for year, price in mapped_data:
+        price_sum[year] += price
+        price_count[year] += 1
+
+    avg_price = {}
+    for year in price_sum:
+        avg_price[year] = price_sum[year] / price_count[year]
+
+    return avg_price
+
+# ---- MAIN ----
+lines = gold_data.strip().split("\n")
+
+mapped = mapper(lines)
+result = reducer(mapped)
+
+print("Average Gold Price Per Year:")
+for year, avg in result.items():
+    print(year, ":", round(avg, 2))
